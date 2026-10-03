@@ -27,7 +27,7 @@ Feito para quem usa o mesmo computador para coisas diferentes, como programar e 
 
 ## Instalação
 
-Baixe a versão mais recente na página de **Releases** deste repositório. Há duas opções:
+Baixe a versão mais recente na página de [**Releases**](https://github.com/JonasSeneTorres/bat-launcher/releases/latest). Há duas opções:
 
 | Arquivo | Descrição |
 |---|---|
