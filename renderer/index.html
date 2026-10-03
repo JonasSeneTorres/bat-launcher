@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none';">
+  <meta name="color-scheme" content="dark light">
+  <title>Bat Launcher</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="dark">
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true"><span data-icon="bolt"></span></div>
+          <div>
+            <div class="brand-name">Bat Launcher</div>
+            <div class="brand-caption">Seus scripts, no seu ritmo</div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <div class="active-indicator"><span class="pulse-dot"></span><span id="active-count">0 ativos</span></div>
+          <button class="icon-button topbar-tool" id="customize-button" type="button" data-tooltip="Personalizar" aria-label="Personalizar interface"><span data-icon="sliders"></span></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <main class="main-content">
+        <div class="page-head" id="home-head">
+          <div class="hero-row">
+            <div>
+              <p class="eyebrow">PAINEL DE CONTROLE</p>
+              <h1 id="home-title">O que vamos iniciar?</h1>
+              <p class="hero-copy">Organize seus scripts e execute tudo com um clique.</p>
+            </div>
+            <div class="hero-actions">
+              <button class="button button-primary" id="add-button" type="button"><span data-icon="plus"></span><span>Novo comando</span></button>
+            </div>
+          </div>
+          <hr class="section-divider" />
+        </div>
+
+        <section class="view" id="home-view" aria-labelledby="home-title">
+          <div class="section-bar">
+            <h2>Seus scripts</h2>
+            <p id="button-summary">Nenhum script cadastrado</p>
+          </div>
+
+          <div class="button-grid" id="button-grid"></div>
+          <div class="empty-state" id="empty-state" hidden>
+            <div class="empty-illustration"><span data-icon="terminal"></span></div>
+            <h3>Sua biblioteca está vazia</h3>
+            <p>Cadastre um script BAT para transformá-lo em um comando rápido.</p>
+            <button class="button button-primary" id="empty-add-button" type="button"><span data-icon="plus"></span><span>Cadastrar primeiro script</span></button>
+          </div>
+        </section>
+
+        <div class="page-head" id="manage-head" hidden>
+          <div class="page-heading">
+            <div>
+              <button class="back-button" id="back-home-button" type="button"><span data-icon="arrow-left"></span><span>Voltar ao painel</span></button>
+              <p class="eyebrow">BIBLIOTECA DE SCRIPTS</p>
+              <h1 id="manage-title">Configurar scripts</h1>
+              <p class="hero-copy">Crie, edite e arraste para alterar a ordem de execução.</p>
+            </div>
+            <button class="button button-primary" id="manage-add-button" type="button"><span data-icon="plus"></span><span>Novo script</span></button>
+          </div>
+        </div>
+
+        <section class="view" id="manage-view" aria-labelledby="manage-title" hidden>
+          <div class="manage-layout">
+            <section class="library-panel" aria-labelledby="library-title">
+              <div class="library-heading">
+                <div>
+                  <h2 id="library-title">Ordem dos scripts</h2>
+                  <p>Arraste os itens ou use as setas.</p>
+                </div>
+                <span class="count-pill" id="manage-count">0</span>
+              </div>
+              <div class="manage-list" id="manage-list"></div>
+              <div class="manage-empty" id="manage-empty" hidden>
+                <span data-icon="layers"></span>
+                <p>Nenhum script cadastrado.</p>
+                <button class="text-button" id="manage-empty-add" type="button">Criar script</button>
+              </div>
+
+              <div class="groups-section" aria-labelledby="groups-title">
+                <div class="library-heading">
+                  <div>
+                    <h2 id="groups-title">Grupos</h2>
+                    <p>Junte scripts relacionados em um único card.</p>
+                  </div>
+                  <span class="count-pill" id="groups-count">0</span>
+                </div>
+                <ul class="groups-list" id="groups-list"></ul>
+                <button class="button button-outline-primary groups-add" id="groups-add-button" type="button"><span data-icon="plus"></span><span>Novo grupo</span></button>
+              </div>
+            </section>
+
+            <section class="editor-panel" id="editor-panel" aria-labelledby="editor-title">
+              <div class="editor-placeholder" id="editor-placeholder">
+                <div class="placeholder-icon"><span data-icon="mouse-pointer"></span></div>
+                <h2>Selecione um script</h2>
+                <p>Escolha um item na biblioteca ou crie um novo script para editar.</p>
+              </div>
+
+              <form class="button-form" id="button-form" hidden>
+                <div class="editor-heading">
+                  <div>
+                    <h2 id="editor-title">Novo script</h2>
+                  </div>
+                  <input id="button-id" type="hidden">
+                </div>
+
+                <div class="form-grid form-grid-two">
+                  <label class="field">
+                    <span>Alias <em>obrigatório</em></span>
+                    <input id="alias-input" name="alias" type="text" maxlength="50" placeholder="Ex.: Servidor local" required>
+                  </label>
+                  <label class="field">
+                    <span>Ícone</span>
+                    <span class="select-with-icon"><span class="select-icon" id="selected-icon-preview" data-icon="bolt"></span><select id="icon-input" name="icon"></select></span>
+                  </label>
+                </div>
+
+                <label class="field">
+                  <span>Descrição <small>opcional</small></span>
+                  <textarea id="description-input" name="description" rows="2" maxlength="140" placeholder="Uma descrição curta para identificar a ação"></textarea>
+                </label>
+
+                <div class="field">
+                  <span id="group-select-label">Grupos <small>opcional</small></span>
+                  <div class="multi-select" id="group-select">
+                    <button class="multi-select-toggle" id="group-select-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="group-select-popover" aria-labelledby="group-select-label group-select-value">
+                      <span id="group-select-value">Nenhum grupo</span>
+                    </button>
+                    <div class="multi-select-popover" id="group-select-popover" hidden>
+                      <div class="multi-select-options" id="group-select-options" role="group" aria-labelledby="group-select-label"></div>
+                      <button class="text-button multi-select-new" id="group-select-new" type="button"><span data-icon="plus"></span><span>Novo grupo</span></button>
+                    </div>
+                  </div>
+                  <small class="field-hint">Scripts em um grupo aparecem dentro do card do grupo, não sozinhos.</small>
+                </div>
+
+                <div class="form-grid form-grid-two">
+                  <label class="toggle-row form-toggle">
+                    <span><strong>Ação dupla</strong><small>Exibe iniciar e encerrar no card.</small></span>
+                    <input id="dual-action-input" name="dualAction" type="checkbox">
+                    <span class="toggle-control" aria-hidden="true"></span>
+                  </label>
+                  <label class="field">
+                    <span>Cor do card</span>
+                    <span class="color-input-wrap"><input id="color-input" name="color" type="color" value="#7c5cff"><span id="color-value">#7c5cff</span></span>
+                  </label>
+                </div>
+
+                <div class="form-options">
+                  <label class="toggle-row form-toggle">
+                    <span><strong>Permissão de administrador</strong><small>Solicita elevação via UAC ao executar os scripts.</small></span>
+                    <input id="admin-input" name="admin" type="checkbox">
+                    <span class="toggle-control" aria-hidden="true"></span>
+                  </label>
+                  <label class="toggle-row form-toggle">
+                    <span><strong>Exibir prompt</strong><small>Mostra a saída e permite enviar entrada pelo terminal.</small></span>
+                    <input id="show-prompt-input" name="showPrompt" type="checkbox" checked>
+                    <span class="toggle-control" aria-hidden="true"></span>
+                  </label>
+                  <label class="toggle-row form-toggle">
+                    <span><strong>Execução em segundo plano</strong><small>Permite fechar o terminal sem interromper o script.</small></span>
+                    <input id="background-input" name="background" type="checkbox">
+                    <span class="toggle-control" aria-hidden="true"></span>
+                  </label>
+                </div>
+
+                <div class="script-fields">
+                  <div class="field-group">
+                    <div class="field-group-title"><span class="step-number">1</span><div><strong>Script de inicialização</strong><small>Arquivo .bat executado pelo botão play</small></div></div>
+                    <div class="file-input-row">
+                      <input id="start-script-input" name="startScript" type="text" placeholder="Selecione um arquivo .bat" required>
+                      <button class="button button-file" id="select-start-script" type="button"><span data-icon="folder-open"></span><span>Procurar</span></button>
+                    </div>
+                  </div>
+                  <div class="field-group" id="stop-script-group" hidden>
+                    <div class="field-group-title"><span class="step-number">2</span><div><strong>Script de encerramento</strong><small>Arquivo .bat executado pelo botão stop</small></div></div>
+                    <div class="file-input-row">
+                      <input id="stop-script-input" name="stopScript" type="text" placeholder="Selecione o arquivo de encerramento">
+                      <button class="button button-file" id="select-stop-script" type="button"><span data-icon="folder-open"></span><span>Procurar</span></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-error" id="form-error" role="alert" hidden></div>
+                <div class="form-actions">
+                  <button class="button button-danger-quiet" id="delete-button" type="button" hidden><span data-icon="trash"></span><span>Excluir</span></button>
+                  <span class="form-actions-spacer"></span>
+                  <button class="button button-quiet" id="cancel-button" type="button">Cancelar</button>
+                  <button class="button button-primary" type="submit"><span data-icon="check"></span><span>Salvar comando</span></button>
+                </div>
+              </form>
+            </section>
+          </div>
+        </section>
+
+        <div class="side-column">
+          <aside class="side-card services-aside" id="services-panel" aria-labelledby="services-title">
+            <div class="activity-heading">
+              <div class="activity-heading-copy">
+                <h2 id="services-title">Serviços do Windows</h2>
+              </div>
+              <span class="activity-badge" id="services-count">0</span>
+            </div>
+            <ul class="services-list" id="services-list"></ul>
+            <div class="activity-empty" id="services-empty">Adicione os serviços que você liga e desliga com frequência.</div>
+            <button class="button button-outline-primary services-add" id="services-add-button" type="button"><span data-icon="plus"></span><span>Adicionar serviço</span></button>
+          </aside>
+
+          <aside class="side-card activity-aside" id="activity-panel" aria-labelledby="activity-title">
+            <div class="activity-heading">
+              <div class="activity-heading-copy">
+                <h2 id="activity-title">Atividades recentes</h2>
+              </div>
+              <span class="activity-badge" id="activity-count">0</span>
+            </div>
+            <div class="activity-list" id="activity-list">
+              <div class="activity-empty">As execuções aparecerão aqui.</div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="settings-modal" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="modal-heading">
+          <div>
+            <p class="eyebrow">APARÊNCIA</p>
+            <h2 id="settings-title">Personalizar interface</h2>
+          </div>
+          <button class="icon-button" id="close-settings-button" type="button" aria-label="Fechar"><span data-icon="close"></span></button>
+        </div>
+        <form id="settings-form">
+          <label class="field">
+            <span>Cor de destaque</span>
+            <span class="settings-color-row"><input id="accent-input" type="color" value="#7c5cff"><span id="accent-value">#7c5cff</span></span>
+          </label>
+          <label class="toggle-row">
+            <span><strong>Tema escuro</strong><small>Use uma interface com menos brilho.</small></span>
+            <input id="dark-mode-input" type="checkbox" checked>
+            <span class="toggle-control" aria-hidden="true"></span>
+          </label>
+          <div class="data-location">
+            <div><span class="data-location-label">Arquivo de configuração</span><code id="config-path">Carregando...</code></div>
+            <button class="text-button" id="open-data-folder" type="button">Abrir pasta <span data-icon="external-link"></span></button>
+          </div>
+          <div class="modal-actions">
+            <button class="button button-quiet" id="cancel-settings-button" type="button">Cancelar</button>
+            <button class="button button-primary" type="submit"><span data-icon="check"></span><span>Aplicar</span></button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="group-modal" hidden>
+      <section class="modal group-modal" role="dialog" aria-modal="true" aria-labelledby="group-modal-title" aria-describedby="group-modal-description">
+        <div class="modal-heading">
+          <div class="group-modal-heading">
+            <span class="card-icon" id="group-modal-icon" data-icon="layers"></span>
+            <div>
+              <h2 id="group-modal-title">Grupo</h2>
+              <p class="group-modal-description" id="group-modal-description"></p>
+            </div>
+          </div>
+          <div class="group-modal-tools">
+            <button class="icon-button" id="edit-group-button" type="button" aria-label="Editar grupo" data-tooltip="Editar grupo"><span data-icon="edit"></span></button>
+            <button class="icon-button" id="close-group-button" type="button" aria-label="Fechar"><span data-icon="close"></span></button>
+          </div>
+        </div>
+        <div class="button-grid group-modal-grid" id="group-modal-grid"></div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="group-edit-modal" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="group-edit-title">
+        <div class="modal-heading">
+          <h2 id="group-edit-title">Novo grupo</h2>
+          <button class="icon-button" id="close-group-edit-button" type="button" aria-label="Fechar"><span data-icon="close"></span></button>
+        </div>
+        <form id="group-edit-form" novalidate>
+          <div class="form-grid form-grid-two">
+            <label class="field">
+              <span>Nome <em>obrigatório</em></span>
+              <input id="group-name-input" type="text" maxlength="50" placeholder="Ex.: Linux" required>
+            </label>
+            <label class="field">
+              <span>Ícone</span>
+              <span class="select-with-icon"><span class="select-icon" id="group-icon-preview" data-icon="layers"></span><select id="group-icon-input"></select></span>
+            </label>
+          </div>
+          <label class="field">
+            <span>Descrição <small>opcional</small></span>
+            <input id="group-description-input" type="text" maxlength="140" placeholder="Ex.: Kali no terminal e com interface gráfica">
+          </label>
+          <label class="field">
+            <span>Cor do card</span>
+            <span class="color-input-wrap"><input id="group-color-input" type="color" value="#7c5cff"><span id="group-color-value">#7C5CFF</span></span>
+          </label>
+          <div class="form-error" id="group-form-error" role="alert" hidden></div>
+          <div class="modal-actions">
+            <button class="button button-danger-quiet" id="delete-group-button" type="button" hidden><span data-icon="trash"></span><span>Excluir grupo</span></button>
+            <span class="form-actions-spacer"></span>
+            <button class="button button-quiet" id="cancel-group-edit-button" type="button">Cancelar</button>
+            <button class="button button-primary" type="submit"><span data-icon="check"></span><span>Salvar grupo</span></button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="services-modal" hidden>
+      <section class="modal services-modal" role="dialog" aria-modal="true" aria-labelledby="services-modal-title">
+        <div class="modal-heading">
+          <div>
+            <p class="eyebrow">SERVIÇOS DO WINDOWS</p>
+            <h2 id="services-modal-title">Escolher serviços</h2>
+          </div>
+          <button class="icon-button" id="close-services-button" type="button" aria-label="Fechar"><span data-icon="close"></span></button>
+        </div>
+        <form id="services-form">
+          <label class="field services-search">
+            <span>Buscar</span>
+            <input id="services-search-input" type="text" autocomplete="off" spellcheck="false" placeholder="Nome ou descrição, ex.: SQL, Postgres, Steam">
+          </label>
+          <p class="services-summary" id="services-summary" aria-live="polite"></p>
+          <div class="services-catalog" id="services-catalog" role="group" aria-label="Serviços disponíveis"></div>
+          <div class="modal-actions">
+            <button class="button button-quiet" id="cancel-services-button" type="button">Cancelar</button>
+            <button class="button button-primary" type="submit"><span data-icon="check"></span><span>Salvar seleção</span></button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="confirm-modal" hidden>
+      <section class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="confirm-icon"><span data-icon="trash"></span></div>
+        <h2 id="confirm-title">Excluir comando?</h2>
+        <p id="confirm-copy">Essa ação não poderá ser desfeita.</p>
+        <div class="modal-actions">
+          <button class="button button-quiet" id="cancel-delete-button" type="button">Cancelar</button>
+          <button class="button button-danger" id="confirm-delete-button" type="button">Excluir</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="terminal-modal" hidden>
+      <section class="modal terminal-modal" role="dialog" aria-modal="true" aria-labelledby="terminal-title">
+        <div class="terminal-heading">
+          <div class="terminal-title-block">
+            <span class="terminal-icon" data-icon="terminal"></span>
+            <div>
+              <p class="eyebrow">SAÍDA DO PROCESSO</p>
+              <h2 id="terminal-title">Terminal</h2>
+              <p class="terminal-path" id="terminal-path"></p>
+            </div>
+          </div>
+          <button class="icon-button" id="close-terminal-button" type="button" aria-label="Fechar terminal"><span data-icon="close"></span></button>
+        </div>
+        <div class="terminal-toolbar">
+          <span class="status-pill status-idle" id="terminal-status">Pronto</span>
+          <div class="terminal-toolbar-actions">
+            <button class="button button-quiet terminal-tool" id="terminal-clear-button" type="button" data-tooltip="Limpar saída" aria-label="Limpar saída"><span data-icon="trash"></span></button>
+            <button class="button button-danger terminal-tool" id="terminal-interrupt-button" type="button" data-tooltip="Interromper execução" aria-label="Interromper execução" hidden><span data-icon="stop"></span></button>
+            <button class="button button-primary terminal-action terminal-tool" id="terminal-action-button" type="button" data-tooltip="Executar novamente" aria-label="Executar novamente"><span id="terminal-action-icon" data-icon="arrow-rotate-right"></span></button>
+          </div>
+        </div>
+        <pre class="terminal-output" id="terminal-output" tabindex="0" aria-live="polite"></pre>
+        <form class="terminal-input-row" id="terminal-input-form">
+          <input id="terminal-input" type="text" autocomplete="off" spellcheck="false" maxlength="32768" placeholder="Digite a entrada do script" disabled>
+          <button class="button button-primary terminal-tool" id="terminal-send-button" type="submit" data-tooltip="Enviar entrada" aria-label="Enviar entrada" disabled><span data-icon="paper-plane"></span></button>
+        </form>
+        <div class="terminal-footer">
+          <span>stdout e stderr em tempo real</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="terminal-confirm-modal" hidden>
+      <section class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="terminal-confirm-title">
+        <div class="confirm-icon"><span data-icon="alert"></span></div>
+        <h2 id="terminal-confirm-title">Interromper execução?</h2>
+        <p id="terminal-confirm-copy">A execução será interrompida imediatamente.</p>
+        <div class="modal-actions">
+          <button class="button button-quiet" id="terminal-confirm-cancel" type="button">Continuar executando</button>
+          <button class="button button-danger" id="terminal-confirm-button" type="button"><span data-icon="stop"></span><span>Interromper</span></button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="activity-log-modal" hidden>
+      <section class="modal activity-log-modal" role="dialog" aria-modal="true" aria-labelledby="activity-log-title">
+        <div class="modal-heading">
+          <div class="activity-log-heading">
+            <span class="confirm-icon is-danger"><span data-icon="alert"></span></span>
+            <div>
+              <p class="eyebrow">LOG DA EXECUÇÃO</p>
+              <h2 id="activity-log-title">Erro na execução</h2>
+              <p class="terminal-path" id="activity-log-subtitle"></p>
+            </div>
+          </div>
+          <button class="icon-button" id="close-activity-log-button" type="button" aria-label="Fechar"><span data-icon="close"></span></button>
+        </div>
+        <pre class="terminal-output activity-log-output" id="activity-log-output" tabindex="0"></pre>
+        <div class="modal-actions">
+          <button class="button button-quiet" id="dismiss-activity-log-button" type="button">Fechar</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

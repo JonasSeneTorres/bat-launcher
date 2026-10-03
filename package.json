@@ -1,0 +1,59 @@
+{
+  "name": "bat-launcher",
+  "productName": "Bat Launcher",
+  "version": "1.0.0",
+  "description": "Aplicação Electron para organizar e executar arquivos BAT",
+  "author": "Jonas Torres",
+  "license": "MIT",
+  "main": "main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "lint": "node --check main.js && node --check preload.js && node --check renderer/app.js && node --check service-monitor.js",
+    "icon": "electron scripts/render-icon.js",
+    "pack": "electron-builder --win --dir",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "dev.jonastorres.batlauncher",
+    "productName": "Bat Launcher",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "service-monitor.js",
+      "script-runner.ps1",
+      "renderer/**/*",
+      "build/icon.png",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Bat Launcher",
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "Bat-Launcher-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Bat-Launcher-${version}-portable.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
+  }
+}

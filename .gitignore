@@ -1,0 +1,5 @@
+node_modules/
+dist/
+
+# Configuracao local (caminhos de scripts e servicos de cada maquina). E recriada vazia ao abrir o app.
+data/
