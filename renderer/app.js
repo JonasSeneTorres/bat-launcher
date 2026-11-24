@@ -285,22 +285,11 @@ const commandActionMeta = (button, action) => {
     ? { action: 'stop', label: 'Encerrar', icon: 'stop' }
     : { action: 'start', label: 'Iniciar', icon: 'play' };
   if (!isDualAction(button)) {
-    return { ...meta, hidden: action === 'stop', disabled: action === 'stop' || isActiveStatus(current.status) };
+    return { ...meta, disabled: action === 'stop' || isActiveStatus(current.status) };
   }
-  const running = serviceRunning(button);
-  const transitioning = isBusy(current) || Boolean(current.executing);
-  if (running === null) {
-    // Servico nao identificado: os dois botoes ficam livres, exceto enquanto o proprio script executa.
-    const ownScriptBusy = current.status === (action === 'stop' ? 'stopping' : 'starting') || current.executing === action;
-    return { ...meta, hidden: false, disabled: ownScriptBusy };
-  }
-  // Servico identificado: mostra apenas o botao que faz sentido para o estado atual.
-  const visibleAction = running ? 'stop' : transitioning ? current.executing || current.action || 'start' : 'start';
-  return {
-    ...meta,
-    hidden: action !== visibleAction,
-    disabled: action === 'stop' ? current.status === 'stopping' || current.executing === 'stop' : transitioning
-  };
+  // Dupla acao: os dois botoes ficam sempre visiveis e clicaveis, exceto enquanto o proprio script executa.
+  const ownScriptBusy = current.status === (action === 'stop' ? 'stopping' : 'starting') || current.executing === action;
+  return { ...meta, disabled: ownScriptBusy };
 };
 
 const actionMeta = (button) => {
@@ -651,8 +640,8 @@ const renderLauncherCard = (button) => {
     : '';
   const actionButtons = isDualAction(button)
     ? `<div class="card-actions">
-        ${startAction.hidden ? '' : `<button class="action-button" data-invoke="${escapeHtml(button.id)}" data-command-action="start" data-tooltip="Iniciar: ${escapeHtml(button.alias)}" type="button" ${startAction.disabled ? 'disabled' : ''} aria-label="Iniciar ${escapeHtml(button.alias)}"><span data-icon="play"></span></button>`}
-        ${stopAction.hidden ? '' : `<button class="action-button is-stop" data-invoke="${escapeHtml(button.id)}" data-command-action="stop" data-tooltip="Encerrar: ${escapeHtml(button.alias)}" type="button" ${stopAction.disabled ? 'disabled' : ''} aria-label="Encerrar ${escapeHtml(button.alias)}"><span data-icon="stop"></span></button>`}
+        <button class="action-button" data-invoke="${escapeHtml(button.id)}" data-command-action="start" data-tooltip="Iniciar: ${escapeHtml(button.alias)}" type="button" ${startAction.disabled ? 'disabled' : ''} aria-label="Iniciar ${escapeHtml(button.alias)}"><span data-icon="play"></span></button>
+        <button class="action-button is-stop" data-invoke="${escapeHtml(button.id)}" data-command-action="stop" data-tooltip="Encerrar: ${escapeHtml(button.alias)}" type="button" ${stopAction.disabled ? 'disabled' : ''} aria-label="Encerrar ${escapeHtml(button.alias)}"><span data-icon="stop"></span></button>
       </div>`
     : `<div class="card-actions"><button class="action-button" data-invoke="${escapeHtml(button.id)}" data-command-action="start" data-tooltip="Executar: ${escapeHtml(button.alias)}" type="button" ${startAction.disabled ? 'disabled' : ''} aria-label="Executar ${escapeHtml(button.alias)}"><span data-icon="play"></span></button></div>`;
   const cardMenu = `<div class="card-menu">

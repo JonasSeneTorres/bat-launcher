@@ -11,7 +11,7 @@ Feito para quem usa o mesmo computador para coisas diferentes, como programar e 
 - **Scripts como cards.** Cada `.bat` vira um card com nome, descrição, ícone e cor.
 - **Ação dupla.** Um card pode ter um script para iniciar (▶) e outro para encerrar (■).
 - **Grupos.** Junte scripts relacionados, como "Linux no terminal" e "Linux com interface gráfica", num único card. Ao clicar, ele abre os cards dos scripts do grupo.
-- **Detecção automática de estado.** O app lê os seus `.bat` e reconhece o que eles controlam: distros do WSL, Docker Desktop, serviços do Windows e programas abertos com `start` ou fechados com `taskkill`. Quando reconhece, mostra se está ligado e exibe só o botão que faz sentido. Quando não reconhece, os dois botões ficam disponíveis.
+- **Detecção automática de estado.** O app lê os seus `.bat` e reconhece o que eles controlam: distros do WSL, Docker Desktop, serviços do Windows e programas abertos com `start` ou fechados com `taskkill`. Quando reconhece, mostra se está ligado ou desligado no card. Os botões de iniciar e encerrar ficam sempre visíveis e clicáveis, reconheça ou não.
 - **Serviços do Windows.** Escolha numa lista, com busca, os serviços que você liga e desliga com frequência (PostgreSQL, SQL Server, etc.) e controle cada um direto pelo painel.
 - **Terminal integrado.** Veja a saída do script em tempo real e envie entradas quando ele pedir.
 - **Execução como administrador.** Scripts marcados como "admin" pedem elevação pelo UAC.
